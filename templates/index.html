@@ -1,0 +1,37 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Погодный маршрут</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>Введите города по маршруту</h2>
+    <form action="{{ url_for('check_weather_route') }}" method="POST">
+
+        <label>Город 1 (начальный):</label>
+        <input type="text" name="city" placeholder="Напр. Москва" required>
+
+        <label>Город 2 (промежуточный, опционально):</label>
+        <input type="text" name="city" placeholder="Напр. Тверь">
+
+        <label>Город 3 (промежуточный, опционально):</label>
+        <input type="text" name="city" placeholder="Напр. Великий Новгород">
+
+        <label>Город 4 (конечный):</label>
+        <input type="text" name="city" placeholder="Напр. Санкт-Петербург" required>
+
+        <h3>Выберите, на сколько дней показать прогноз:</h3>
+        <select name="forecast_days">
+            <option value="1">1 день</option>
+            <option value="3">3 дня</option>
+            <option value="5" selected>5 дней</option>
+        </select>
+
+        <button type="submit" class="btn">Показать прогноз</button>
+    </form>
+</div>
+</body>
+</html>

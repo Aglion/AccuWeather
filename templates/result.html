@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результаты прогноза</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+<div class="container1">
+    <h2>Прогноз погоды ({{ forecast_days }} дней)</h2>
+
+    <div id="map" style="width: 100%; height: 500px; margin-bottom: 30px;"></div>
+
+    {% for city_data in route_data %}
+        <h3>Город: {{ city_data.city }}</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Min T, °C</th>
+                <th>Max T, °C</th>
+                <th>Осадки (%)</th>
+                <th>Ветер (км/ч)</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for f in city_data.forecast %}
+                <tr>
+                    <td>{{ f.date }}</td>
+                    <td>{{ f.min_temp }}</td>
+                    <td>{{ f.max_temp }}</td>
+                    <td>{{ f.precip_probability }}</td>
+                    <td>{{ f.wind_speed }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+    {% endfor %}
+
+    <p><a href="{{ url_for('index') }}">Назад к форме</a></p>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+    const routeData = JSON.parse('{{ route_data_json|safe }}');
+
+
+    const map = L.map('map').setView([55.7558, 37.6176], 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    let latlngs = [];
+
+    routeData.forEach(item => {
+      if (item.lat && item.lon) {
+        // Ставим маркер
+        const marker = L.marker([item.lat, item.lon]).addTo(map);
+
+        let popupContent = `<b>${item.city}</b><br/>`;
+        const day0 = item.forecast[0];
+        popupContent += `Мин: ${day0.min_temp}°C<br/>`;
+        popupContent += `Макс: ${day0.max_temp}°C<br/>`;
+        popupContent += `Осадки: ${day0.precip_probability}%<br/>`;
+        popupContent += `Ветер: ${day0.wind_speed} км/ч`;
+
+        marker.bindPopup(popupContent);
+
+        latlngs.push([item.lat, item.lon]);
+      }
+    });
+
+    if (latlngs.length > 1) {
+      L.polyline(latlngs, { color: 'red' }).addTo(map);
+      map.fitBounds(L.latLngBounds(latlngs));
+    }
+</script>
+</body>
+</html>

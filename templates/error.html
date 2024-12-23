@@ -1,0 +1,20 @@
+<!-- templates/error.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container1">
+    <h2>Произошла ошибка</h2>
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% else %}
+        <p>Попробуйте ещё раз</p>
+    {% endif %}
+    <p><a href="{{ url_for('index') }}">Назад к форме</a></p>
+</div>
+</body>
+</html>
